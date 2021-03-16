@@ -1,4 +1,4 @@
 [webservers]
-143.198.225.143
+143.198.225.143 ansible_connection=local
 
 
