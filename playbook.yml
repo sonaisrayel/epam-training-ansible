@@ -1,0 +1,28 @@
+---
+
+- hosts: 'webservers'
+  remote_user: root
+  tasks:
+    - name: 'Install nginx'
+      apt:
+       name: 'nginx'
+       state: 'present'
+      become: true 
+    - name: 'Install mysql-server'   
+      apt: 
+        name: 'mysql-server'
+        update_cache: 'yes' 
+        cache_valid_time: 3600
+        state: 'present'
+      become: true
+    - name: 'Install php and modules'
+      apt:
+        update_cache: true
+        name: 
+          - php
+          - php-mysql 
+    - name: 'Install wordpress'
+      apt:       
+
+    
+  
