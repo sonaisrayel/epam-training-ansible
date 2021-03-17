@@ -8,6 +8,7 @@
        name: 'nginx'
        state: 'present'
       become: true 
+
     - name: 'Install mysql-server'   
       apt: 
         name: 'mysql-server'
@@ -15,6 +16,7 @@
         cache_valid_time: 3600
         state: 'present'
       become: true
+
     - name: 'Install php and modules'
       apt:
         update_cache: true
@@ -23,30 +25,40 @@
           - php-mysql 
           - php-fpm
           - php-zip
+
     - name: 'Install python requirements for mySQL'
       pip:
         name: 'PyMySQL'
-        state: 'present'        
+        state: 'present'
+
     - name: 'Dowoload Wordpress'
       unarchive:
         src: 'https://wordpress.org/latest.tar.gz'
         dest: '/opt'
         remote_src: true
-      become: true  
-    - name: 'Set mysql root password'
-      mysql_user: 
-        name: 'root'
-        password: '123456'
-        login_user: 'root'
-        login_password: ''
-        login_unix_socket: '/var/run/mysqld/mysql.sock'
-        check_implicit_admin: yes
+      become: true
+
+    - name: 'Create WP mysql user'
+      community.mysql.mysql_user:
+        name: 'wpuser'
+        password: 'wp-123456!!!'
         priv: '*.*:ALL'
-      become: true 
-    - name: 'Create database for wordpress'
-      community.mysql.mysql_user: 
-         name: 'wordpress_user'
-         password: '123456'
-         priv: '*.*:ALL'
-         login_password: '123456'
-         login_user: 'root'
+        login_user: 'root'
+        login_password: '123456'
+        state: 'present'
+      become: true
+
+    - name: 'Create a new database called wordpress'
+      mysql_db:
+        login_password: '123456'
+        login_user: 'root'
+        name: 'wordpress'
+        state: 'present'
+
+    - name: 'Configure new MySQL user called wpuser'
+      mysql_user:
+        login_user: 'root'
+        login_password: '123456'
+        name: 'wpuser'
+        password: 'wp_user123456!!!'
+        priv: 'wordpress.*:ALL'
