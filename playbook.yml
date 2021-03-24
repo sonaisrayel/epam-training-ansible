@@ -67,3 +67,9 @@
         name: 'wpuser'
         password: 'wp_user123456!!!'
         priv: 'wordpress.*:ALL'
+
+    - name: 'Upload wp-config.php'
+      copy: 
+        src: 'wp-config.php'
+        dest: '/opt/wordpress/wp-config.php'
+      become: true  
