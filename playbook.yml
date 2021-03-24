@@ -1,28 +1,43 @@
 ---
 
 - hosts: 'webservers'
-  remote_user: root
   tasks:
     - name: 'Install nginx'
       apt:
        name: 'nginx'
        state: 'present'
-      become: true 
-    - name: 'Install mysql-server'   
-      apt: 
-        name: 'mysql-server'
-        update_cache: 'yes' 
-        cache_valid_time: 3600
-        state: 'present'
       become: true
     - name: 'Install php and modules'
       apt:
         update_cache: true
-        name: 
+        name:
           - php
-          - php-mysql 
-    - name: 'Install wordpress'
-      apt:       
-
-    
+          - php-mysql
+      become: true
+    - name: 'Install mysql-server'   
+      apt: 
+       name: 'mysql-server'
+       update_cache: 'yes' 
+       cache_valid_time: 3600
+       state: 'present'
+      become: true
+    - name: 'Download and exract Wordpress files'
+      unarchive: 
+        src: 'https://wordpress.org/latest.tar.gz'
+        dest: '/opt'
+        remote_src: true 
+      become: true
+      
+    - name: 'installing python-3 mysql libraries'
+      apt: 
+        name: 'python3-mysqldb' 
+        state: 'present'
+      become: true  
+    - name: 'Set mysql root user password'
+      mysql_user:
+        login_user: 'root'
+        login_password: ''
+        name: 'root'
+        password: '123456' 
+      become: true
   
