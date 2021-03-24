@@ -1,17 +1,12 @@
 ---
 
 - hosts: 'webservers'
-<<<<<<< HEAD
-=======
-  remote_user: 'root'
->>>>>>> 44774900ef0e60e45832ef4fa7dd7b279083e98b
+  remote_user: 'ubuntu'
   tasks:
     - name: 'Install nginx'
       apt:
        name: 'nginx'
        state: 'present'
-<<<<<<< HEAD
-=======
       become: true 
 
     - name: 'Install mysql-server'   
@@ -20,7 +15,6 @@
         update_cache: 'yes' 
         cache_valid_time: 3600
         state: 'present'
->>>>>>> 44774900ef0e60e45832ef4fa7dd7b279083e98b
       become: true
 
     - name: 'Install php and modules'
@@ -28,16 +22,12 @@
         update_cache: true
         name:
           - php
-<<<<<<< HEAD
           - php-mysql
+          - php-fpm
+          - php-zip
+          - python3-mysqldb
       become: true
-    - name: 'Install mysql-server'   
-      apt: 
-       name: 'mysql-server'
-       update_cache: 'yes' 
-       cache_valid_time: 3600
-       state: 'present'
-      become: true
+
     - name: 'Download and exract Wordpress files'
       unarchive: 
         src: 'https://wordpress.org/latest.tar.gz'
@@ -45,34 +35,12 @@
         remote_src: true 
       become: true
       
-    - name: 'installing python-3 mysql libraries'
-      apt: 
-        name: 'python3-mysqldb' 
-        state: 'present'
-      become: true  
     - name: 'Set mysql root user password'
       mysql_user:
         login_user: 'root'
-        login_password: ''
+        login_password: '123456'
         name: 'root'
         password: '123456' 
-      become: true
-  
-=======
-          - php-mysql 
-          - php-fpm
-          - php-zip
-
-    - name: 'Install python requirements for mySQL'
-      pip:
-        name: 'PyMySQL'
-        state: 'present'
-
-    - name: 'Dowoload Wordpress'
-      unarchive:
-        src: 'https://wordpress.org/latest.tar.gz'
-        dest: '/opt'
-        remote_src: true
       become: true
 
     - name: 'Create WP mysql user'
@@ -99,4 +67,3 @@
         name: 'wpuser'
         password: 'wp_user123456!!!'
         priv: 'wordpress.*:ALL'
->>>>>>> 44774900ef0e60e45832ef4fa7dd7b279083e98b

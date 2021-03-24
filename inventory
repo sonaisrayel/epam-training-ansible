@@ -1,8 +1,2 @@
 [webservers]
-<<<<<<< HEAD
    aws
-=======
-143.198.225.143 ansible_connection=local
-
-
->>>>>>> 44774900ef0e60e45832ef4fa7dd7b279083e98b
