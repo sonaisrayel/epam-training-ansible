@@ -1,12 +1,13 @@
 ---
 
 - hosts: 'webservers'
-  remote_user: 'ubuntu'
+  remote_user: 'root'
   tasks:
-    - name: 'Install nginx'
+    - name: 'Install apache2'
       apt:
-       name: 'nginx'
+       name: 'apache2'
        state: 'present'
+       update_cache: 'yes'
       become: true 
 
     - name: 'Install mysql-server'   
@@ -26,15 +27,24 @@
           - php-fpm
           - php-zip
           - python3-mysqldb
+          - php-common
+          - php-mbstring
+          - php-gd
+          - php-intl 
+          - php-xml 
+          - php-mysql
+          - libapache2-mod-php
       become: true
 
     - name: 'Download and exract Wordpress files'
       unarchive: 
         src: 'https://wordpress.org/latest.tar.gz'
-        dest: '/opt'
-        remote_src: true 
+        dest: '/var/www/html/'
+        remote_src: true
+        owner: 'www-data'
+        group: 'www-data' 
       become: true
-      
+
     - name: 'Set mysql root user password'
       mysql_user:
         login_user: 'root'
@@ -42,6 +52,7 @@
         name: 'root'
         password: '123456' 
       become: true
+  
 
     - name: 'Create WP mysql user'
       community.mysql.mysql_user:
@@ -60,16 +71,19 @@
         name: 'wordpress'
         state: 'present'
 
-    - name: 'Configure new MySQL user called wpuser'
-      mysql_user:
-        login_user: 'root'
-        login_password: '123456'
-        name: 'wpuser'
-        password: 'wp_user123456!!!'
-        priv: 'wordpress.*:ALL'
 
     - name: 'Upload wp-config.php'
       copy: 
         src: 'wp-config.php'
-        dest: '/opt/wordpress/wp-config.php'
+        dest: '/var/www/html/wordpress/wp-config.php'
+        owner: 'www-data'
+        group: 'www-data'
       become: true  
+    
+    - name: 'change apache default config file'
+      copy:
+        src: '000-default.conf'
+        dest: '/etc/apache2/sites-available/000-default.conf'
+      become: 'true'
+
+
